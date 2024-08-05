@@ -5,15 +5,16 @@ import { Box, TextField, Button } from '@mui/material';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-export default function AddItemForm({ fetchItems }) {
+export default function AddItemForm({ onNewItem }) {
   const [name, setName] = useState('');
 
   const handleAddItem = async () => {
     if (name.trim()) {
       try {
-        await addDoc(collection(db, 'pantryItems'), { name });
+        const docRef = await addDoc(collection(db, 'pantryItems'), { name });
+        const newItem = { id: docRef.id, name };
         setName('');
-        fetchItems();
+        onNewItem(newItem); // Optimistically add the new item to the list
       } catch (error) {
         console.error('Error adding document:', error);
       }
@@ -29,7 +30,7 @@ export default function AddItemForm({ fetchItems }) {
         gap: 2,
         p: 2,
         mt: 2,
-        bgcolor: '#ffe4e6', // Light pink background
+        bgcolor: '#333', // Black background
         borderRadius: '8px',
       }}
       noValidate
@@ -44,7 +45,7 @@ export default function AddItemForm({ fetchItems }) {
       />
       <Button
         variant="contained"
-        sx={{ width: '100%', backgroundColor: '#ff9aa2', color: '#fff', '&:hover': { backgroundColor: '#ff6f91' } }}
+        sx={{ width: '100%', backgroundColor: '#ff6f00', color: '#fff', '&:hover': { backgroundColor: '#e64a00' } }}
         onClick={handleAddItem}
       >
         Add Item
@@ -52,12 +53,3 @@ export default function AddItemForm({ fetchItems }) {
     </Box>
   );
 }
-
-
-
-
-
-
-
-
-
